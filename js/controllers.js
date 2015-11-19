@@ -1,12 +1,29 @@
-app.controller('ldcontroller', function(JsonldRest){
-	/* Configure the API baseUrl */
-	  JsonldRest.setBaseUrl('http://experiment.worldcat.org');
-
-	  /* A handler to a server collection of persons with a local context interpretation */
-	  var bib = JsonldRest.collection('oclc');
-	  
-	  /* We retrieve the bib http://www.worldcat.org/oclc/ */
-	  var res = bib.one('7977212.jsonld').get();
-	  
-	  console.log(res.about);
-});
+app.controller('ldcontroller', function($scope, $http) {
+      kb = $rdf.graph();
+      bib = 'http://www.worldcat.org/oclc/7977212';
+      
+      $http({
+    	  method: 'GET',
+    	  url: 'http://experiment.worldcat.org/oclc/7977212.rdf',
+    	  //url: bib,
+    	  headers: {
+    		   'Accept': 'application/rdf+xml'
+    		 },
+    	}).then(function successCallback(response) {
+    		$rdf.parse(response.data, kb, bib, 'application/rdf+xml');   
+            $scope.name = kb.the($rdf.sym(bib), $rdf.sym('http://schema.org/name')).value;
+            $scope.author = kb.the(kb.the($rdf.sym(bib), $rdf.sym('http://schema.org/creator')), $rdf.sym('http://schema.org/name')).value;
+            $scope.datePublished = kb.the($rdf.sym(bib), $rdf.sym('http://schema.org/datePublished')).value;
+            subjectNodes = kb.each($rdf.sym(bib), $rdf.sym('http://schema.org/about'));
+            subjects = [];
+            for (i = 0; i < subjectNodes.length; i++) {
+                if (kb.the(subjectNodes[i], $rdf.sym('http://schema.org/name'))) {
+                 subjects.push(kb.the(subjectNodes[i], $rdf.sym('http://schema.org/name')));
+                }
+            }
+            $scope.subjects = subjects;
+    	  }, function errorCallback(response) {
+    		alert('Failed');
+    		console.log(response);
+    	  });
+    });
