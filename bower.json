@@ -1,0 +1,30 @@
+{
+  "name": "angularLDTest",
+  "authors": [
+    "Karen Coombs <librarywebchic@gmail.com>"
+  ],
+  "description": "Test angular application parse Linked Data",
+  "main": "index.html",
+  "moduleType": [],
+  "keywords": [
+    "linked",
+    "data",
+    "demo"
+  ],
+  "license": "Apache 2.0",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-jsonld": "~1.0.0"
+  },
+  "resolutions": {
+    "jsonld": "~0.3.6"
+  }
+}

@@ -1,0 +1,43 @@
+<!doctype html>
+<html ng-app="jsonld-test">
+  <head>
+    <script src= "node_modules/rdflib/dist/rdflib.js"></script>
+    <script src="build/_bower.js"></script>
+  </head>
+  <body ng-controller="ldcontroller">
+    <h2>Record</h2>
+    <p>{{name}}</p>
+    <p>{{author}}</p>
+    <p>{{datePublished}}</p>
+    <ul>
+        <li ng-repeat="subject in subjects">
+        {{subject.value}}
+        </li>
+      </ul>
+  </body>
+  
+  <script>
+  var app = angular.module('jsonld-test', []);
+	  
+  app.controller('ldcontroller', function($scope, $timeout) {
+      kb = $rdf.graph();
+      fetch = $rdf.fetcher(kb);
+      fetch.nowOrWhenFetched('http://experiment.worldcat.org/oclc/7977212.rdf', undefined, function() {
+        $timeout(function(){ 
+          $scope.name = kb.the($rdf.sym('http://www.worldcat.org/oclc/7977212'), $rdf.sym('http://schema.org/name')).value;
+          $scope.author = kb.the(kb.the($rdf.sym('http://www.worldcat.org/oclc/7977212'), $rdf.sym('http://schema.org/creator')), $rdf.sym('http://schema.org/name')).value;
+          $scope.datePublished = kb.the($rdf.sym('http://www.worldcat.org/oclc/7977212'), $rdf.sym('http://schema.org/datePublished')).value;
+          subjectNodes = kb.each($rdf.sym('http://www.worldcat.org/oclc/7977212'), $rdf.sym('http://schema.org/about'));
+          subjects = [];
+          for (i = 0; i < subjectNodes.length; i++) {
+        	  if (kb.the(subjectNodes[i], $rdf.sym('http://schema.org/name'))) {
+        	   subjects.push(kb.the(subjectNodes[i], $rdf.sym('http://schema.org/name')));
+        	  }
+          }
+          $scope.subjects = subjects;
+        });
+      });
+    });
+</script>
+</html>
+
