@@ -39,6 +39,5 @@ app.controller('ldcontroller', ['$scope', '$http', function($scope, $http) {
 	    		alert('Failed');
 	    		console.log(response);
 	    	  });
-	      console.log($scope.subjects);
 	  };
     }]);
