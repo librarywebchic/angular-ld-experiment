@@ -21,14 +21,40 @@
   </form>
   
     <h2>{{graphType}}</h2>
-    <p>{{name}}</p>
-    <p>{{author}}</p>
-    <p>{{datePublished}}</p>
+    <p>Title: {{name}}</p>
+    <p>Author: {{author}}</p>
+    <p>Date Published: {{datePublished}}</p>
+    <p>Subjects:</p>
     <ul>
         <li ng-repeat="subject in subjects">
         {{subject.value}}
         </li>
       </ul>
-  </body>
-</html>
-
+      <p>Book Edition: {{bookEdition}}</p>
+      <p>Copyright Year: {{copyrightYear}}</p>
+      <p>Work: {{work}}</p>
+      <p>Genre: {{genre}}</p>
+      <p>In Language: {{inLanguage}}</p> 
+      <p>Publisher: {{publisher}}</p>
+      <p>Data set: {{dataSet}}</p>
+      
+    <p>Contributors:</p>
+    <ul>
+        <li ng-repeat="contributor in contributors">
+        {{contributor.value}}
+        </li>
+    </ul>
+    
+    <p>Descriptions:</p>
+    <ul>
+        <li ng-repeat="description in descriptions">
+        {{description}}
+        </li>
+    </ul> 
+    
+    <p>ISBNs:</p>
+    <ul>
+        <li ng-repeat="isbn in isbns">
+        {{isbn}}
+        </li>
+    </ul> 
