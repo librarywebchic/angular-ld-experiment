@@ -21,40 +21,42 @@
   </form>
   
     <h2>{{graphType}}</h2>
-    <p>Title: {{name}}</p>
-    <p>Author: {{author}}</p>
-    <p>Date Published: {{datePublished}}</p>
-    <p>Subjects:</p>
-    <ul>
+    <p ng-show="name">Title: {{name}}</p>
+    <p ng-show="author">Author: {{author}}</p>
+    <p ng-show="datePublished">Date Published: {{datePublished}}</p>
+    <p ng-show="subjects">Subjects:</p>
+    <ul ng-show="subjects">
         <li ng-repeat="subject in subjects">
         {{subject.value}}
         </li>
       </ul>
-      <p>Book Edition: {{bookEdition}}</p>
-      <p>Copyright Year: {{copyrightYear}}</p>
-      <p>Work: {{work}}</p>
-      <p>Genre: {{genre}}</p>
-      <p>In Language: {{inLanguage}}</p> 
-      <p>Publisher: {{publisher}}</p>
-      <p>Data set: {{dataSet}}</p>
+      <p ng-show="bookEdition">Book Edition: {{bookEdition}}</p>
+      <p ng-show="copyrightYear">Copyright Year: {{copyrightYear}}</p>
+      <p ng-show="work">Work: {{work}}</p>
+      <p ng-show="genre">Genre: {{genre}}</p>
+      <p ng-show="inLanguage">In Language: {{inLanguage}}</p> 
+      <p ng-show="publisher">Publisher: {{publisher}}</p>
+      <p ng-show="dataSet">Data set: {{dataSet}}</p>
       
-    <p>Contributors:</p>
-    <ul>
+    <p ng-show="contributors">Contributors:</p>
+    <ul ng-show="contributors">
         <li ng-repeat="contributor in contributors">
         {{contributor.value}}
         </li>
     </ul>
     
-    <p>Descriptions:</p>
-    <ul>
+    <p ng-show="descriptions">Descriptions:</p>
+    <ul ng-show="descriptions">
         <li ng-repeat="description in descriptions">
         {{description}}
         </li>
     </ul> 
     
-    <p>ISBNs:</p>
-    <ul>
+    <p ng-show="isbns">ISBNs:</p>
+    <ul ng-show="isbns">
         <li ng-repeat="isbn in isbns">
         {{isbn}}
         </li>
     </ul> 
+</body>
+</html>
