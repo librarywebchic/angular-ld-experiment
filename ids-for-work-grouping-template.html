@@ -1,0 +1,9 @@
+<h2>Related IDs</h2>
+<ul>
+    <li ng-repeat="workExample in workExample">
+    {{workExample}}
+    <ul ng-repeat="isbn in workExample.isbns">
+    <li>{{isbn}}</li>
+    </ul>
+    </li>
+</ul>

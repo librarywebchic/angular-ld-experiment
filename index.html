@@ -5,6 +5,7 @@
     <script src="build/_bower.js"></script>
     <script src="js/app.js"></script>
     <script src="js/controllers.js"></script>
+    <link rel="stylesheet" href="build/_bower.css">
   </head>
   <body ng-controller="ldcontroller">
   <form ng-submit="submit()">
@@ -22,7 +23,7 @@
   
     <h2>{{graphType}}</h2>
     <p ng-show="name">Title: {{name}}</p>
-    <p ng-show="author">Author: {{author}}</p>
+    <p ng-show="author_name">Author: <a href="" ng-click="openAuthor()">{{author_name}}</a></p>
     <p ng-show="datePublished">Date Published: {{datePublished}}</p>
     <p ng-show="subjects">Subjects:</p>
     <ul ng-show="subjects">
@@ -32,7 +33,8 @@
       </ul>
       <p ng-show="bookEdition">Book Edition: {{bookEdition}}</p>
       <p ng-show="copyrightYear">Copyright Year: {{copyrightYear}}</p>
-      <p ng-show="work">Work: {{work}}</p>
+      <p ng-show="work">Work: {{work}}<br/>
+      <a href="" ng-click="openIdentifiers()">Show identifiers in work grouping</a></p>
       <p ng-show="genre">Genre: {{genre}}</p>
       <p ng-show="inLanguage">In Language: {{inLanguage}}</p> 
       <p ng-show="publisher">Publisher: {{publisher}}</p>

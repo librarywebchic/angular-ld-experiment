@@ -1,4 +1,4 @@
 /**
  * 
  */
-var app = angular.module('jsonld-test', []);
+var app = angular.module('jsonld-test', ['ngDialog']);
