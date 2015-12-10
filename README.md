@@ -32,8 +32,17 @@ $ grunt
 [NPM](https://www.npmjs.com/) is a dependency management library for Javascript. It is used to install the required libraries for testing and parsing RDF data. The server-side dependencies are configured in the file `package.json`.
 
 [Bower](http://bower.io/) is a dependency management library for Javascript. It is used to install the required client-side libraries for testing and parsing RDF data. The dependencies are configured in the file `bower.json`.
-[Grunt](https://getcomposer.org/doc/00-intro.md) is a dependency management library for PHP. It is used to install the required libraries for testing and parsing RDF data. The dependencies are configured in the file `http://gruntjs.com`.
+[Grunt](https://getcomposer.org/doc/00-intro.md) is a dependency management library for PHP. It is used to install the required libraries for testing and parsing RDF data. The dependencies are configured in the file `GruntFile.js`.
 
+### Step 4 Install local proxy server for cross domain requests
+In a Terminal Window
+
+```bash
+$ cd {YOUR-APACHE-DOCUMENT-ROOT}
+$ git clone git clone https://github.com/librarywebchic/cors-proxy.gi
+$ cd cors-proxy
+$ node index.js
+```
 ## Usage
 
 To run the app, point your web browser at the localhost address where these instructions will install it by default. 
