@@ -39,14 +39,21 @@ app.controller('ldcontroller', ['$scope', '$http', 'ngDialog', function($scope, 
 	                }
 	            }
 	            $scope.subjects = subjects;
-	            
-	            $scope.bookEdition = kb.the($rdf.sym(uri), SCHEMA('bookEdition')).value;
-	            $scope.copyrightYear = kb.the($rdf.sym(uri), SCHEMA('copyrightYear')).value;
+	            if (kb.the($rdf.sym(uri), SCHEMA('bookEdition'))){
+	            	$scope.bookEdition = kb.the($rdf.sym(uri), SCHEMA('bookEdition')).value;
+	    		}
+	            if (kb.the($rdf.sym(uri), SCHEMA('copyrightYear'))){
+	            	$scope.copyrightYear = kb.the($rdf.sym(uri), SCHEMA('copyrightYear')).value;
+	    		}
 	            $scope.work = kb.the($rdf.sym(uri), SCHEMA('exampleOfWork')).uri;
 	            urlParts = $scope.work.split('/');
 	            $scope.work_id = urlParts[urlParts.length -1];
-	            $scope.genre = kb.the($rdf.sym(uri), SCHEMA('genre')).value;
-	            $scope.inLanguage = kb.the($rdf.sym(uri), SCHEMA('inLanguage')).value;
+	            if (kb.the($rdf.sym(uri), SCHEMA('genre'))){
+	            	$scope.genre = kb.the($rdf.sym(uri), SCHEMA('genre')).value;
+	            }
+	            if (kb.the($rdf.sym(uri), SCHEMA('inLanguage'))) {
+	            	$scope.inLanguage = kb.the($rdf.sym(uri), SCHEMA('inLanguage')).value;
+	            }
 	            $scope.publisher = kb.the(kb.the($rdf.sym(uri), SCHEMA('publisher')), SCHEMA('name')).value;
 	            $scope.dataSet = kb.the(kb.the($rdf.sym(uri), WDRS('describedby')), $rdf.sym('http://rdfs.org/ns/void#inDataset')).uri;
 	            
@@ -117,13 +124,11 @@ app.controller('ldcontroller', ['$scope', '$http', 'ngDialog', function($scope, 
 	    };
 	  
 	  $scope.openIdentifiers = function () {
-	    	uri = $scope.work;
-	      	request_url = 'http://experiment.worldcat.org/entity/work/data/' + $scope.work_id + '.rdf';
+	      	request_url = 'http://experiment.worldcat.org/entity/work/data/413352.rdf';
 	      	
 	      	var SCHEMA = $rdf.Namespace("http://schema.org/")
 	      	var LIBRARY = $rdf.Namespace("http://purl.org/library/")
 	      	
-	        kb = $rdf.graph();
 	    	$http({
 	    	  	  method: 'GET',
 	    	  	  url: request_url,
@@ -131,35 +136,41 @@ app.controller('ldcontroller', ['$scope', '$http', 'ngDialog', function($scope, 
 	    	  		   'Accept': 'application/rdf+xml'
 	    	  		 },
 	    	  	}).then(function successCallback(response) {
-	    	  		$rdf.parse(response.data, kb, uri, 'application/rdf+xml');   
-	    	        workExampleNodes = kb.each($rdf.sym(uri), SCHEMA('workExample'));
-	    	        workExamples = {};
-	    	        for (i = 0; i < workExampleNodes.length; i++){
-	    	        	kb.load(workExampleNodes[i].uri);
-	    	        	productModelNodes = kb.each(workExampleNodes[i], SCHEMA('workExample'));
-	    	        	if (kb.the(workExampleNodes[i], LIBRARY('oclcnum'))){
-	    	        		oclcNumber = kb.the(workExampleNodes[i], LIBRARY('oclcnum')).value;
-	    	        	} else {
-	    	        		oclcNumber = kb.the(workExampleNodes[i], SCHEMA('productID')).value;
-	    	        	}
-	    	        	
-	    	        	isbns = [];
-	    	            for (i = 0; i < productModelNodes.length; i++) {
-	    	            	isbnNodes = kb.each(productModelNodes[i], SCHEMA('isbn'));
-	    	                if (isbnNodes) {
-	    	                	for (n = 0; n < isbnNodes.length; n++) {
-	    	                		isbns.push(isbnNodes[n].value);
-	    	                	}
-	    	                }
-	    	            }
-	    	            console.log(isbns);
-	    	            workExamples[oclcNumber] = isbns;
-	    	        }
-	    	        $scope.workExamples = workExamples;
-	    	        console.log(workExamples);
-	    	          
+	    	  		console.log('got work!');
+	    	        workStore = $rdf.graph();
+  	    	  		$rdf.parse(response.data, workStore, $scope.work, 'application/rdf+xml');
+  	    	  		
+  	    	  		bibs = workStore.each(uri, SCHEMA('workExample'));
+  	    	  		
+  	    	  		// load all the bibURIS into a single graph
+  	    	  		for (i = 0; i < bibs.length; i++){
+  	    	  			urlParts = bibs[i].uri.split('/');
+  	    	  			oclcNumber = urlParts[urlParts.length -1];
+  	    	  			request_url = request_url = 'http://experiment.worldcat.org/oclc/' + oclcNumber + '.rdf';
+  	    	  			parse_data(request_url, bibs[i].uri, workStore);
+  	    	  		}
+  	    	  		console.log('all the bibs are loaded!')
+  	    	  		
+  	    	  		// get all the IBSNs from the graph
+  	    	  		var sparqlQuery = 'PREFIX schema: <http://schema.org> \
+                       SELECT ?isbn \
+                       WHERE {' +
+                         '<' + uri + '> schema:workExample ?ocn . \
+                         ?work schema:workExample ?ocn . \
+                         ?ocn schema:workExample ?productModel . \
+                         ?productModel schema:isbn ?isbn . \
+                       }';
+  	    	  		var query = $rdf.SPARQLToQuery(sparqlQuery, true, workStore);
+
+  	    	  		workStore.fetcher = null;
+  	    	  		workStore.query(query, function(result) {
+  	    	  			console.log(result);
+  	    	  			var isbns = result['?isbn'];
+  	    	  			console.log(isbns);
+  	    	  		});
+	    	        
 	    	  	  }, function errorCallback(response) {
-	    	  		alert('Failed');
+	    	  		alert('Failed to get work');
 	    	  		console.log(response);
 	    	  	  });
 	    	ngDialog.open({
@@ -168,5 +179,20 @@ app.controller('ldcontroller', ['$scope', '$http', 'ngDialog', function($scope, 
 	    	    data: $scope.workExamples
 	    	});
 	    };
-	  
+	    
+	    function parse_data (request_url, uri, store){
+	    	$http({
+	    	  	  method: 'GET',
+	    	  	  url: request_url,
+	    	  	  headers: {
+	    	  		   'Accept': 'application/rdf+xml'
+	    	  		 },
+	    	  	}).then(function successCallback(response) {   
+	    	  		$rdf.parse(response.data, store, uri, 'application/rdf+xml')  
+	    	  	  }, function errorCallback(response) {
+	    	  		alert('Failed to get bib -' + uri);
+	    	  		console.log(response);
+	    	});
+	  			
+	    }
     }]);
